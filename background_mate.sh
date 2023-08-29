@@ -26,7 +26,6 @@ function sequentially(){
 }
 
 function random_image(){
-    echo "random";
     prev_file_regexp="$1";
     time_sleep=$2;
     file="$(file ~/Изображения/* | grep -Pv "directory$prev_file_regexp" |
