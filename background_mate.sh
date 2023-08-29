@@ -1,6 +1,4 @@
 #!/bin/sh
-config="/etc/background_mate/background_mate.conf";
-config_home="$HOME/background_mate.conf";
 
 function change_bg(){
     if [[ ! -z "$2" ]] && grep -Pq '^[0-9\.]+$' <<< "$2"; then
@@ -17,7 +15,6 @@ function change_bg(){
 }
 
 function sequentially(){
-    config="/etc/background_mate/background_mate.conf";
     time_sleep="$1";
     file ~/Изображения/* | grep -Pv "directory" |
                            awk -F: '{print $1}' | sort -R | while read file; do
@@ -29,6 +26,7 @@ function sequentially(){
 }
 
 function random_image(){
+    echo "random";
     prev_file_regexp="$1";
     time_sleep=$2;
     file="$(file ~/Изображения/* | grep -Pv "directory$prev_file_regexp" |
@@ -38,9 +36,14 @@ function random_image(){
 
 while true; do
     time_sleep=""; random="";
-    if [[ -e "$config_home" ]]; then source "$config_home";
-    elif [[ -e "$config" ]]; then source "$config";
+    if [[ -e "$HOME/background_mate.conf" ]]; then
+        export config="$HOME/background_mate.conf";
+    elif [[ -e "/etc/background_mate/background_mate.conf" ]]; then
+        export config="/etc/background_mate/background_mate.conf";
     fi
+
+
+    if [[ -e "$config" ]]; then source "$config"; fi
     if [[ ! -z "$1" ]] && grep -Pq '^[0-9\.]+$' <<< "$1"; then
         time_sleep="$1";
     elif [[ ! -z "$2" ]] && grep -Pq '^[0-9\.]+$' <<< "$2"; then
