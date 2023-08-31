@@ -30,10 +30,10 @@ function random_image(){
 while true; do
     time_sleep=""; random="";
     if [[ -e "$HOME/background_mate.conf" ]] &&
-       grep -Pq '[a-zA-Z_]+=[a-zA-Z0-9\.]+' <<< "$HOME/background_mate.conf"; then
+       grep -Pq '[a-zA-Z_]+=[a-zA-Z0-9\.]+' "$HOME/background_mate.conf"; then
         export config="$HOME/background_mate.conf";
     elif [[ -e "/etc/background_mate/background_mate.conf" ]] &&
-       grep -Pq '[a-zA-Z_]+=[a-zA-Z0-9\.]+' <<< "/etc/background_mate/background_mate.conf"; then
+       grep -Pq '[a-zA-Z_]+=[a-zA-Z0-9\.]+' "/etc/background_mate/background_mate.conf"; then
         export config="/etc/background_mate/background_mate.conf";
     fi
 
