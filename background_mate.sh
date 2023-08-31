@@ -6,11 +6,9 @@ function change_bg(){
     else
         time_sleep="15";
     fi
+    sleep $time_sleep;
     if xdotool getwindowfocus getwindowname | grep -Pq '^Рабочий\ стол$'; then
         dconf write /org/mate/desktop/background/picture-filename "'$1'";
-        sleep $time_sleep;
-    else
-        sleep 1;
     fi
 }
 
