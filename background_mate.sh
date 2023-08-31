@@ -1,11 +1,7 @@
 #!/bin/sh
 
 function change_bg(){
-    if [[ ! -z "$2" ]] && grep -Pq '^[0-9\.]+$' <<< "$2"; then
-        time_sleep="$2";
-    else
-        time_sleep="15";
-    fi
+    time_sleep="$2";
     sleep $time_sleep;
     if xdotool getwindowfocus getwindowname | grep -Pq '^Рабочий\ стол$'; then
         dconf write /org/mate/desktop/background/picture-filename "'$1'";
@@ -45,7 +41,7 @@ while true; do
         time_sleep="$1";
     elif [[ ! -z "$2" ]] && grep -Pq '^[0-9\.]+$' <<< "$2"; then
         time_sleep="$2";
-    elif grep -Pq '^[0-9\.]+$' <<< "$time_sleep"; then
+    elif grep -Pq '^[0-9\.]+$' <<< "$time_sleep"; then # from background_mate.conf
         time_sleep="$time_sleep";
     else
         time_sleep="15";
