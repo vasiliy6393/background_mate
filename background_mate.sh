@@ -12,9 +12,9 @@ function sequentially(){
     time_sleep="$1";
     file ~/Изображения/* | grep -Pv "directory" |
                            awk -F: '{print $1}' | sort -R | while read file; do
-        conf_md5="$(md5sum "$config" | awk '{print $1}')";
+        [[ ! -z "$config" ]] && conf_md5="$(md5sum "$config" | awk '{print $1}')";
         change_bg "$file" $time_sleep;
-        conf_md5_now="$(md5sum "$config" | awk '{print $1}')";
+        [[ ! -z "$config" ]] && conf_md5_now="$(md5sum "$config" | awk '{print $1}')"; 
         if [[ "$conf_md5_now" != "$conf_md5" ]]; then break; fi
     done
 }
