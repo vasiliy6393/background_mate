@@ -29,14 +29,15 @@ function random_image(){
 
 while true; do
     time_sleep=""; random="";
-    if [[ -e "$HOME/background_mate.conf" ]]; then
+    if [[ -e "$HOME/background_mate.conf" ]] &&
+       grep -Pq '[a-zA-Z_]+=[a-zA-Z0-9\.]+' <<< "$HOME/background_mate.conf"; then
         export config="$HOME/background_mate.conf";
-    elif [[ -e "/etc/background_mate/background_mate.conf" ]]; then
+    elif [[ -e "/etc/background_mate/background_mate.conf" ]] &&
+       grep -Pq '[a-zA-Z_]+=[a-zA-Z0-9\.]+' <<< "/etc/background_mate/background_mate.conf"; then
         export config="/etc/background_mate/background_mate.conf";
     fi
 
-
-    if [[ -e "$config" ]]; then source "$config"; fi
+    if [[ ! -z "$config" ]] && [[ -e "$config" ]]; then source "$config"; fi
     if [[ ! -z "$1" ]] && grep -Pq '^[0-9\.]+$' <<< "$1"; then
         time_sleep="$1";
     elif [[ ! -z "$2" ]] && grep -Pq '^[0-9\.]+$' <<< "$2"; then
