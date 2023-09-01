@@ -2,12 +2,18 @@
 
 function change_bg(){
     time_sleep="$2";
-    sleep $time_sleep;
+    config="$3";
+    time_sleep_sec="$(echo "$time_sleep" | sed 's/\([0-9]\+\)h/\1*3600\+/g;s/\([0-9]\+\)m/\1*60\+/g;s/s//g;s/+$//' | bc)";
+    for (( c=0; c<=$time_sleep_sec; c++ )) do
+        [[ ! -z "$config" ]] && conf_md5="$(md5sum "$config" | awk '{print $1}')";
+        sleep 1;
+        [[ ! -z "$config" ]] && conf_md5_now="$(md5sum "$config" | awk '{print $1}')";
+        if [[ "$conf_md5_now" != "$conf_md5" ]]; then break 2; fi
+    done
     if xdotool getwindowfocus getwindowname | grep -Pq '^Рабочий\ стол$'; then
         dconf write /org/mate/desktop/background/picture-filename "'$1'";
     fi
 }
-
 function sequentially(){
     time_sleep="$1";
     file ~/Изображения/* | grep -Pv "directory" |
