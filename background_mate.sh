@@ -1,6 +1,7 @@
 #!/bin/sh
 
 function change_bg(){
+    img="$1";
     time_sleep="$2";
     config="$3";
     time_sleep_sec="$(echo "$time_sleep" | sed 's/\([0-9]\+\)h/\1*3600\+/g;s/\([0-9]\+\)m/\1*60\+/g;s/s//g;s/+$//' | bc)";
@@ -11,26 +12,29 @@ function change_bg(){
         if [[ "$conf_md5_now" != "$conf_md5" ]]; then break 2; fi
     done
     if xdotool getwindowfocus getwindowname | grep -Pq '^Рабочий\ стол$'; then
-        dconf write /org/mate/desktop/background/picture-filename "'$1'";
+        dconf write /org/mate/desktop/background/picture-filename "'$img'";
     fi
 }
+
 function sequentially(){
     time_sleep="$1";
+    config="$2";
     file ~/Изображения/* | grep -Pv "directory" |
-                           awk -F: '{print $1}' | sort -R | while read file; do
+                           awk -F: '{print $1}' | sort -R | while read img; do
         [[ ! -z "$config" ]] && conf_md5="$(md5sum "$config" | awk '{print $1}')";
-        change_bg "$file" $time_sleep;
-        [[ ! -z "$config" ]] && conf_md5_now="$(md5sum "$config" | awk '{print $1}')"; 
+        change_bg "$img" $time_sleep "$config";
+        [[ ! -z "$config" ]] && conf_md5_now="$(md5sum "$config" | awk '{print $1}')";
         if [[ "$conf_md5_now" != "$conf_md5" ]]; then break; fi
     done
 }
 
 function random_image(){
-    prev_file_regexp="$1";
+    prev_img_regexp="$1";
     time_sleep=$2;
-    file="$(file ~/Изображения/* | grep -Pv "directory$prev_file_regexp" |
+    config="$3";
+    img="$(file ~/Изображения/* | grep -Pv "directory$prev_img_regexp" |
                                    awk -F: '{print $1}' | sort -R | tail -n1)";
-    change_bg "$file" $time_sleep;
+    change_bg "$img" $time_sleep "$config";
 }
 
 while true; do
@@ -54,20 +58,20 @@ while true; do
         time_sleep="15";
     fi
     if grep -Piq '\-\-random=false|\-r *no|\-r *false' <<< "$*"; then
-        sequentially "$time_sleep";
+        sequentially "$time_sleep" "$config";
     elif grep -Piq '\-\-random|\-r' <<< "$*"; then
-        prev_file="$file";
-        if ! grep -Pq '^$' <<< $prev_file; then prev_file_regexp="|$prev_file";
-        else prev_file_regexp="";
+        prev_img="$img";
+        if ! grep -Pq '^$' <<< $prev_img; then prev_img_regexp="|$prev_img";
+        else prev_img_regexp="";
         fi
-        random_image "$prev_file_regexp" $time_sleep;
+        random_image "$prev_img_regexp" $time_sleep "$config";
     elif grep -Piq 'true' <<< "$random"; then
-        prev_file="$file";
-        if ! grep -Pq '^$' <<< $prev_file; then prev_file_regexp="|$prev_file";
-        else prev_file_regexp="";
+        prev_img="$img";
+        if ! grep -Pq '^$' <<< $prev_img; then prev_img_regexp="|$prev_img";
+        else prev_img_regexp="";
         fi
-        random_image "$prev_file_regexp" $time_sleep;
+        random_image "$prev_img_regexp" $time_sleep "$config";
     else
-        sequentially "$time_sleep";
+        sequentially "$time_sleep" "$config";
     fi
 done
