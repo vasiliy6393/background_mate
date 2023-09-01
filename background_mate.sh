@@ -4,7 +4,7 @@ function change_bg(){
     time_sleep="$2";
     config="$3";
     time_sleep_sec="$(echo "$time_sleep" | sed 's/\([0-9]\+\)h/\1*3600\+/g;s/\([0-9]\+\)m/\1*60\+/g;s/s//g;s/+$//' | bc)";
-    for (( c=0; c<=$time_sleep_sec; c++ )) do
+    for (( c=1; c<=$time_sleep_sec; c++ )) do
         [[ ! -z "$config" ]] && conf_md5="$(md5sum "$config" | awk '{print $1}')";
         sleep 1;
         [[ ! -z "$config" ]] && conf_md5_now="$(md5sum "$config" | awk '{print $1}')";
